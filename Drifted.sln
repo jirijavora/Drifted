@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TilemapPipeline", "TilemapPipeline\TilemapPipeline.csproj", "{C0DE8F9F-0240-4C0B-88D9-57550DCB0794}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGame", "ExampleGame\ExampleGame.csproj", "{AB16A9E6-54BC-457F-A777-7FB7CEE7FE41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drifted", "ExampleGame\Drifted.csproj", "{AB16A9E6-54BC-457F-A777-7FB7CEE7FE41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
