@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="2">
+ <properties>
+  <property name="mapmeta" value="mapvalue"/>
+ </properties>
+ <tileset firstgid="1" name="Untitled" tilewidth="32" tileheight="32" tilecount="8" columns="8">
+  <image source="tiles.png" width="256" height="32"/>
+ </tileset>
+ <tileset firstgid="9" name="Untitled" tilewidth="32" tileheight="32" tilecount="8" columns="8">
+  <image source="./tiles.png" width="256" height="32"/>
+ </tileset>
+ <layer id="1" name="adsg" width="32" height="32" opacity="0.72">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu3PsQkAIBBD0VgpuJSjOIqjOIqjqcUN4Ilg8YtHqiO5ICkAn8sfbAAA4ESSqucuSmUZls5uy+7o35rlxf+u7QCAdybtpGp+ABAAAA==
+  </data>
+ </layer>
+ <layer id="2" name="Layer 1" width="32" height="32">
+  <properties>
+   <property name="layermeta" value="layervalue"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu2UUQrAMAhD+7P7X3nsbwydibrJRh6UQloatbZrzbMZI9KZc5g4EB3dx9Lhn8m707+C5cP2ReX+p7ByuK55WlQz1P9u9vZFOkrVJ6pXxR/pM/TcjD+in9e/1vsHXtzV/Cfqn+GJ+2f9u+qfgX3Pf/v/hRBCiLfZAUDgXx4AEAAA
+  </data>
+ </layer>
+ <objectgroup id="3" name="sprites" x="6" y="6" opacity="0.72">
+  <properties>
+   <property name="objectmeta" value="objectvalue"/>
+  </properties>
+  <object id="1" name="hero" x="300" y="194" width="64" height="128">
+   <properties>
+    <property name="image" value="./hero.png"/>
+    <property name="name" value="The Hero"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

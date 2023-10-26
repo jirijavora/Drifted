@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>../../../../../source/repos/TiledMonogame/TiledMonogame/Content/tiles.png</SourceFile>
+  <SourceTime>2022-02-28T09:51:57.2922913-06:00</SourceTime>
+  <DestFile>C:/Users/nhbean/Teaching/CIS580/TilemapPipeline/ExampleGame/Content/bin/Windows/Content/../../../../../source/repos/TiledMonogame/TiledMonogame/Content/tiles_0.xnb</DestFile>
+  <DestTime>2023-10-25T14:12:49.1957089-05:00</DestTime>
+  <Importer>TextureImporter</Importer>
+  <ImporterTime>2022-07-26T06:44:56-05:00</ImporterTime>
+  <Processor>TextureProcessor</Processor>
+  <ProcessorTime>2022-07-26T06:44:56-05:00</ProcessorTime>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

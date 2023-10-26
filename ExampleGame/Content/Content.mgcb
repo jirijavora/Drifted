@@ -1,0 +1,38 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+/reference:..\..\TilemapPipeline\bin\Debug\net6.0\TilemapPipeline.dll
+
+#---------------------------------- Content ---------------------------------#
+
+#begin arial.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:arial.spritefont
+
+#begin BasicMapTest.tmx
+/importer:TiledImporter
+/processor:BasicTilemapProcessor
+/build:BasicMapTest.tmx
+
+#begin HeroMapTest.tmx
+/importer:TiledImporter
+/processor:HeroTilemapProcessor
+/build:HeroMapTest.tmx
+
+#begin MapTest.tmx
+/importer:TiledImporter
+/processor:OOTilemapProcessor
+/build:MapTest.tmx
+
