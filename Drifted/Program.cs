@@ -1,3 +1,2 @@
-﻿
-using var game = new ExampleGame.Game1();
+﻿using var game = new Drifted.Drifted();
 game.Run();
