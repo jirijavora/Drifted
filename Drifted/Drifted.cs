@@ -32,6 +32,8 @@ public class Drifted : Game {
         _spriteFont = Content.Load<SpriteFont>("Arial");
 
         _driftedMap = Content.Load<DriftedTilemap>("DriftedTrack");
+
+        _driftedMap.LoadContent(Content);
     }
 
     protected override void Update(GameTime gameTime) {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drifted;
@@ -7,6 +8,10 @@ public class DriftedTilemap : OOTilemap {
     private bool[] _outsideTrackArr;
     public Player Player { get; init; }
 
+
+    public void LoadContent(ContentManager content) {
+        Player.LoadContent(content);
+    }
 
     public override void Update(GameTime gameTime) {
         var dims = new Vector2(Size.X * Tilesize.X, Size.Y * Tilesize.Y);

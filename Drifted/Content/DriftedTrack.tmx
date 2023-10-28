@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="3">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="4">
  <tileset firstgid="1" name="race_track_tiles" tilewidth="128" tileheight="128" spacing="2" tilecount="465" columns="31">
   <image source="racing_track_tiles.png" width="4096" height="2048"/>
  </tileset>
@@ -14,7 +14,7 @@
   </data>
  </layer>
  <objectgroup id="3" name="Objects">
-  <object id="2" name="Player" x="1440" y="2760">
+  <object id="2" name="Player" x="1750" y="2820">
    <properties>
     <property name="image" value="./car_blue_3.png"/>
     <property name="name" value="Player"/>

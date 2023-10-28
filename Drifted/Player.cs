@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -38,6 +40,24 @@ public class Player {
 
     private Color[] textureData;
 
+    private int? startLineX;
+    private int? startLineY1;
+    private int? startLineY2;
+
+    private bool onStartLine = true;
+
+    private TimeSpan lapStartTime = TimeSpan.Zero;
+    private TimeSpan? lastLapTime;
+    private TimeSpan? bestLapTime;
+
+    private SpriteFont font;
+
+    private bool triedLoadingFromFile;
+
+
+    public void LoadContent(ContentManager content) {
+        font = content.Load<SpriteFont>("Arial");
+    }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
         if (textureData == null) {
@@ -72,6 +92,64 @@ public class Player {
 
 
     public void Update(GameTime gameTime, bool[] outsideTrackArr, Vector2 trackDims) {
+        if (triedLoadingFromFile == false) {
+            if (File.Exists("savefile.txt")) {
+                Stream stream = null;
+                try {
+                    stream = new FileStream("savefile.txt", FileMode.Open);
+                    using (var reader = new StreamReader(stream)) {
+                        stream = null;
+                        lastLapTime = TimeSpan.FromSeconds(double.Parse(reader.ReadLine()));
+                        bestLapTime = TimeSpan.FromSeconds(double.Parse(reader.ReadLine()));
+                    }
+                }
+                finally {
+                    if (stream != null)
+                        stream.Dispose();
+                }
+            }
+
+
+            triedLoadingFromFile = true;
+        }
+
+
+        if (startLineX == null) startLineX = (int)Position.X;
+        if (startLineY1 == null) startLineY1 = (int)Position.Y - 180;
+        if (startLineY2 == null) startLineY2 = (int)Position.Y + 180;
+
+        var newOnStartline = Position.X >= startLineX - 10 && Position.X <= startLineX + 10 &&
+                             Position.Y >= startLineY1 && Position.Y <= startLineY2;
+
+        if (!onStartLine && newOnStartline) {
+            lastLapTime = gameTime.TotalGameTime - lapStartTime;
+            lapStartTime = gameTime.TotalGameTime;
+
+            if (bestLapTime.HasValue) {
+                if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) bestLapTime = lastLapTime;
+            }
+            else {
+                bestLapTime = lastLapTime;
+            }
+
+            Stream stream = null;
+            try {
+                stream = new FileStream("savefile.txt", FileMode.OpenOrCreate);
+                using (var writer = new StreamWriter(stream)) {
+                    stream = null;
+
+                    writer.WriteLine(lastLapTime.Value.TotalSeconds);
+                    writer.WriteLine(bestLapTime.Value.TotalSeconds);
+                }
+            }
+            finally {
+                if (stream != null)
+                    stream.Dispose();
+            }
+        }
+
+        onStartLine = newOnStartline;
+
         var heading = new Vector2((float)Math.Cos(_rotation), (float)Math.Sin(_rotation));
 
         var playerOffTrackPercentage = getPlayerOffTrackPercentage(outsideTrackArr, trackDims);
@@ -162,5 +240,11 @@ public class Player {
         spriteBatch.Draw(Texture, Position, null, Color.White, SpriteRotation + _rotation, Center, Vector2.One,
             SpriteEffects.None,
             1);
+
+        if (lastLapTime.HasValue)
+            spriteBatch.DrawString(font,
+                $"Last lap time: {lastLapTime.Value.TotalSeconds:0.00}s    (best: {bestLapTime.Value.TotalSeconds:0.00}s)",
+                new Vector2(50, 50),
+                Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
     }
 }
