@@ -18,6 +18,10 @@ public class OOTilemapContent {
     ///     The tile layers, which are composed of tiles
     /// </summary>
     public OOTilemapLayerContent[] Layers { get; set; }
+
+    public Vector2 Size { get; set; }
+    public Vector2 Tilesize { get; set; }
+    public ExternalReference<Texture2DContent> Texture { get; set; }
 }
 
 /// <summary>

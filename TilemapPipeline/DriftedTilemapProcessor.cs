@@ -13,6 +13,9 @@ public class DriftedTilemapProcessor : ContentProcessor<TiledMapContent, OOTilem
         OOTilemapProcessor processor = new();
         var ooMap = processor.Process(input, context);
         driftedMap.Layers = ooMap.Layers;
+        driftedMap.Tilesize = ooMap.Tilesize;
+        driftedMap.Size = ooMap.Size;
+        driftedMap.Texture = ooMap.Texture;
 
         // Create our hero object 
         driftedMap.Player = new PlayerContent();
@@ -32,15 +35,21 @@ public class DriftedTilemapProcessor : ContentProcessor<TiledMapContent, OOTilem
         var path = player.Properties["image"];
         context.Logger.LogMessage("Image is " + path);
 
+        var rotation = float.Parse(player.Properties["rotation"]);
+
         // Build the hero texture
         var texture =
             context.BuildAndLoadAsset<TextureContent, Texture2DContent>(new ExternalReference<TextureContent>(path),
                 "TextureProcessor");
 
+        var center = new Vector2(texture.Mipmaps[0].Width / 2f, texture.Mipmaps[0].Height / 2f);
+
         // Save the Player in the HeroTilemapContent object 
         driftedMap.Player = new PlayerContent {
-            Position = new Vector2(player.X, player.Y),
-            Texture = texture
+            Position = new Vector2(player.X, player.Y) - center,
+            Texture = texture,
+            Center = center,
+            Rotation = MathHelper.ToRadians(rotation)
         };
 
         context.Logger.LogMessage($"Player is on position {player.X}, {player.Y}");

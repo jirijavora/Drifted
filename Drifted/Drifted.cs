@@ -56,7 +56,6 @@ public class Drifted : Game {
 
         _driftedMap.Draw(gameTime, _spriteBatch);
 
-        _spriteBatch.DrawString(_spriteFont, "Drifted Tilemap", new Vector2(50, 50), Color.White);
 
         _spriteBatch.End();
 

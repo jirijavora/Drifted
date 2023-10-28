@@ -17,6 +17,10 @@ public class OOTilemap {
     /// </summary>
     public OOTilemapLayer[] Layers { get; init; }
 
+    public Vector2 Size { get; init; }
+    public Vector2 Tilesize { get; init; }
+    public Texture2D Texture { get; init; }
+
     /// <summary>
     ///     Updates the tilemap layers
     /// </summary>
@@ -98,6 +102,8 @@ public class OOTilemapTile {
     /// <param name="gameTime">The current game time</param>
     /// <param name="spriteBatch">The SpriteBatch to draw the map with</param>
     public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch) { }
+
+    public virtual void FillAreaOnMap(Color[] textureData, ref bool[] mapToFill, Vector2 mapDims) { }
 }
 
 /// <summary>
@@ -142,7 +148,49 @@ public class OOTexturedTile : OOTilemapTile {
     /// <param name="gameTime">The current game time</param>
     /// <param name="spriteBatch">The SpriteBatch to draw with</param>
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
-        spriteBatch.Draw(Texture, WorldRect, SourceRect, Color.White, Rotation, Center, TileSpriteEffects,
+        var drawRect = new Rectangle(WorldRect.X + (int)Center.X, WorldRect.Y + (int)Center.Y, WorldRect.Width,
+            WorldRect.Height);
+
+        spriteBatch.Draw(Texture, drawRect, SourceRect, Color.White,
+            Rotation, Center, TileSpriteEffects,
             1f);
+    }
+
+
+    public override void FillAreaOnMap(Color[] textureData, ref bool[] mapToFill, Vector2 mapDims) {
+        var transformMatrix = Matrix.Identity;
+
+        transformMatrix = transformMatrix * Matrix.CreateRotationZ(Rotation);
+
+        if ((TileSpriteEffects & SpriteEffects.FlipHorizontally) != 0)
+            transformMatrix = transformMatrix * Matrix.CreateReflection(new Plane(-1, 0, 0, Center.X));
+        if ((TileSpriteEffects & SpriteEffects.FlipVertically) != 0)
+            transformMatrix = transformMatrix * Matrix.CreateReflection(new Plane(0, -1, 0, Center.Y));
+
+        transformMatrix = transformMatrix * Matrix.CreateTranslation(SourceRect.Left, SourceRect.Top, 0);
+
+        for (var i = WorldRect.Left; i < WorldRect.Right; i++)
+        for (var i2 = WorldRect.Top; i2 < WorldRect.Bottom; i2++) {
+            var tileCoordinateX = i - WorldRect.Left;
+            var tileCoordinateY = i2 - WorldRect.Top;
+
+
+            var tileTextureCoordinate =
+                Vector2.Transform(new Vector2(tileCoordinateX, tileCoordinateY), transformMatrix);
+
+            var tileTextureCoordinateY = (int)tileTextureCoordinate.Y > Texture.Height - 1
+                ? Texture.Height - 1
+                : (int)tileTextureCoordinate.Y;
+            var tileTextureCoordinateX = (int)tileTextureCoordinate.X > Texture.Width - 1
+                ? Texture.Width - 1
+                : (int)tileTextureCoordinate.X;
+
+            if (tileTextureCoordinateY < 0) tileTextureCoordinateY = 0;
+            if (tileTextureCoordinateX < 0) tileTextureCoordinateX = 0;
+
+
+            mapToFill[i2 * (int)mapDims.X + i] =
+                textureData[tileTextureCoordinateY * Texture.Width + tileTextureCoordinateX].A > 0;
+        }
     }
 }

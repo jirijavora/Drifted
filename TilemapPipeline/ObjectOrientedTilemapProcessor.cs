@@ -17,6 +17,11 @@ internal class OOTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemapC
         // Process the layers using the processed tiles
         output.Layers = ProcessLayers(input.TileLayers, tiles, input.TileWidth, input.TileHeight, context).ToArray();
 
+        output.Size = new Vector2(input.Width, input.Height);
+        output.Tilesize = new Vector2(input.TileWidth, input.TileHeight);
+        output.Texture = context.BuildAsset<TextureContent, Texture2DContent>(
+            new ExternalReference<TextureContent>(input.Tilesets[0].ImageFilename), "TextureProcessor");
+
         return output;
     }
 

@@ -18,6 +18,10 @@ public class PlayerContent {
     ///     The hero's texture
     /// </summary>
     public Texture2DContent Texture;
+
+    public Vector2 Center;
+
+    public float Rotation;
 }
 
 /// <summary>
