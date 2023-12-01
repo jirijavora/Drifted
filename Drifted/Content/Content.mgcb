@@ -14,15 +14,39 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin arial.spritefont
+#begin Blank.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Blank.png
+
+#begin DriftedIntro.tmx
+/importer:TiledImporter
+/processor:IntroTilemapProcessor
+/build:DriftedIntro.tmx
+
+#begin DriftedTrack.tmx
+/importer:TiledImporter
+/processor:GameTilemapProcessor
+/build:DriftedTrack.tmx
+
+#begin MagnetoBold.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:arial.spritefont
+/build:MagnetoBold.spritefont
 
-#begin DriftedTrack.tmx
-/importer:TiledImporter
-/processor:DriftedTilemapProcessor
-/build:DriftedTrack.tmx
+#begin MagnetoBoldLarge.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MagnetoBoldLarge.spritefont
 

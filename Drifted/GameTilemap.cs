@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Drifted;
 
-public class DriftedTilemap : OOTilemap {
+public class GameTilemap : OOTilemap {
     private bool[] _outsideTrackArr;
     public Player Player { get; init; }
 

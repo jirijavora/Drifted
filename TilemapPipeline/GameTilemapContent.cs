@@ -27,8 +27,8 @@ public class PlayerContent {
 /// <summary>
 ///     A class representing a Tilemap with a hero in it
 /// </summary>
-[ContentSerializerRuntimeType("Drifted.DriftedTilemap, Drifted")]
-public class DriftedTilemapContent : OOTilemapContent {
+[ContentSerializerRuntimeType("Drifted.GameTilemap, Drifted")]
+public class GameTilemapContent : OOTilemapContent {
     /// <summary>
     ///     The hero's starting location (and appearance) in the map
     /// </summary>

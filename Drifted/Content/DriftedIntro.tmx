@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="8">
+ <tileset firstgid="1" name="race_track_tiles" tilewidth="128" tileheight="128" spacing="2" tilecount="465" columns="31">
+  <image source="racing_track_tiles.png" width="4096" height="2048"/>
+ </tileset>
+ <layer id="1" name="Background" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu3DQQ0AAAwDoVNX/5ImYx9IWDVVVVX19QEDDS09oA8AAA==
+  </data>
+ </layer>
+ <layer id="2" name="Track" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgGAWjYBSMgpEJeBkHHgvgccd6hoHHB4l3hwMI50JoWvDBOJdM90HNgWFa8EfDbzT8Bh3G577AQYAXMeKWGwWjYBSMgpEKAOE/OBKgDwAA
+  </data>
+ </layer>
+ <objectgroup id="3" name="Objects">
+  <object id="6" name="Drited title" type="Title" x="2560" y="1600">
+   <properties>
+    <property name="value" value="Drifted"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="7" name="Play subtitle" type="Text" x="2560" y="2600">
+   <properties>
+    <property name="value" value="Press `Enter` to play"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+</map>

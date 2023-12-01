@@ -1,66 +1,44 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Drifted.StateManagement;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Drifted;
 
 public class Drifted : Game {
+    private const int PreferredWidth = 1280;
+    private const int PreferredHeight = 800;
     private readonly GraphicsDeviceManager _graphics;
-    private DriftedTilemap _driftedMap;
-    private SpriteBatch _spriteBatch;
-    private SpriteFont _spriteFont;
+    private readonly ScreenManager screenManager;
 
 
     public Drifted() {
         _graphics = new GraphicsDeviceManager(this);
-        _graphics.PreferredBackBufferWidth = 1280;
-        _graphics.PreferredBackBufferHeight = 800;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        Window.Title = "Drifted";
+
+        var screenFactory = new ScreenFactory();
+        Services.AddService(typeof(IScreenFactory), screenFactory);
+        screenManager = new ScreenManager(this);
+        Components.Add(screenManager);
     }
 
-    protected override void Initialize() {
-        // TODO: Add your initialization logic here
-
-        base.Initialize();
+    private void AddInitialScreens() {
+        screenManager.AddScreen(new IntroScreen(screenManager));
     }
 
     protected override void LoadContent() {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        _graphics.PreferredBackBufferWidth = PreferredWidth;
+        _graphics.PreferredBackBufferHeight = PreferredHeight;
+        _graphics.ApplyChanges();
 
-        // Load content items
-        _spriteFont = Content.Load<SpriteFont>("Arial");
-
-        _driftedMap = Content.Load<DriftedTilemap>("DriftedTrack");
-
-        _driftedMap.LoadContent(Content);
+        AddInitialScreens();
     }
 
     protected override void Update(GameTime gameTime) {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
+        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-
-        _driftedMap.Update(gameTime);
-
-
         base.Update(gameTime);
-    }
-
-    protected override void Draw(GameTime gameTime) {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-
-        var scaleMatrix = Matrix.CreateScale(0.25f);
-
-        // TODO: Add your drawing code here
-        _spriteBatch.Begin(transformMatrix: scaleMatrix);
-
-        _driftedMap.Draw(gameTime, _spriteBatch);
-
-
-        _spriteBatch.End();
-
-        base.Draw(gameTime);
     }
 }

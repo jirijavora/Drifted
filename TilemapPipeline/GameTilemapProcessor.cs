@@ -4,21 +4,21 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 namespace TilemapPipeline;
 
-[ContentProcessor(DisplayName = "Drifted Tilemap Processor")]
-public class DriftedTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemapContent> {
-    public override DriftedTilemapContent Process(TiledMapContent input, ContentProcessorContext context) {
-        DriftedTilemapContent driftedMap = new();
+[ContentProcessor(DisplayName = "Game Tilemap Processor")]
+public class GameTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemapContent> {
+    public override GameTilemapContent Process(TiledMapContent input, ContentProcessorContext context) {
+        GameTilemapContent gameTilemap = new();
 
         // Use the OOTilemapProcessor to load the tile layers
         OOTilemapProcessor processor = new();
         var ooMap = processor.Process(input, context);
-        driftedMap.Layers = ooMap.Layers;
-        driftedMap.Tilesize = ooMap.Tilesize;
-        driftedMap.Size = ooMap.Size;
-        driftedMap.Texture = ooMap.Texture;
+        gameTilemap.Layers = ooMap.Layers;
+        gameTilemap.Tilesize = ooMap.Tilesize;
+        gameTilemap.Size = ooMap.Size;
+        gameTilemap.Texture = ooMap.Texture;
 
         // Create our hero object 
-        driftedMap.Player = new PlayerContent();
+        gameTilemap.Player = new PlayerContent();
 
         context.Logger.LogMessage(input.ObjectGroups.Count + " object groups found");
         foreach (var objG in input.ObjectGroups) context.Logger.LogMessage(objG.Name);
@@ -45,7 +45,7 @@ public class DriftedTilemapProcessor : ContentProcessor<TiledMapContent, OOTilem
         var center = new Vector2(texture.Mipmaps[0].Width / 2f, texture.Mipmaps[0].Height / 2f);
 
         // Save the Player in the HeroTilemapContent object 
-        driftedMap.Player = new PlayerContent {
+        gameTilemap.Player = new PlayerContent {
             Position = new Vector2(player.X, player.Y) - center,
             Texture = texture,
             Center = center,
@@ -55,6 +55,6 @@ public class DriftedTilemapProcessor : ContentProcessor<TiledMapContent, OOTilem
         context.Logger.LogMessage($"Player is on position {player.X}, {player.Y}");
 
         // Return the processed map
-        return driftedMap;
+        return gameTilemap;
     }
 }

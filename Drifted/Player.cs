@@ -56,7 +56,7 @@ public class Player {
 
 
     public void LoadContent(ContentManager content) {
-        font = content.Load<SpriteFont>("Arial");
+        font = content.Load<SpriteFont>("MagnetoBold");
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -240,6 +240,11 @@ public class Player {
         spriteBatch.Draw(Texture, Position, null, Color.White, SpriteRotation + _rotation, Center, Vector2.One,
             SpriteEffects.None,
             1);
+
+        spriteBatch.DrawString(font,
+            $"{(gameTime.TotalGameTime - lapStartTime).TotalSeconds:00.00}s",
+            new Vector2(50, 3050),
+            Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
 
         if (lastLapTime.HasValue)
             spriteBatch.DrawString(font,
