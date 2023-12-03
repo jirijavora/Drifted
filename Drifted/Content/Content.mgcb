@@ -26,15 +26,35 @@
 /processorParam:TextureFormat=Color
 /build:Blank.png
 
+#begin Button.tmx
+/importer:TiledImporter
+/processor:ButtonTilemapProcessor
+/build:Button.tmx
+
 #begin DriftedIntro.tmx
 /importer:TiledImporter
 /processor:IntroTilemapProcessor
 /build:DriftedIntro.tmx
 
-#begin DriftedTrack.tmx
+#begin DriftedMenu.tmx
+/importer:TiledImporter
+/processor:MenuTilemapProcessor
+/build:DriftedMenu.tmx
+
+#begin Level1.tmx
 /importer:TiledImporter
 /processor:GameTilemapProcessor
-/build:DriftedTrack.tmx
+/build:Level1.tmx
+
+#begin Level2.tmx
+/importer:TiledImporter
+/processor:GameTilemapProcessor
+/build:Level2.tmx
+
+#begin LevelScreen.tmx
+/importer:TiledImporter
+/processor:LevelScreenTilemapProcessor
+/build:LevelScreen.tmx
 
 #begin MagnetoBold.spritefont
 /importer:FontDescriptionImporter
@@ -49,4 +69,11 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:MagnetoBoldLarge.spritefont
+
+#begin MagnetoBoldSmall.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MagnetoBoldSmall.spritefont
 

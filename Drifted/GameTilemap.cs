@@ -1,19 +1,21 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Drifted.StateManagement;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Drifted;
 
+[IgnoreTypeMemberReorderingAttribute]
 public class GameTilemap : OOTilemap {
     private bool[] _outsideTrackArr;
     public Player Player { get; init; }
 
 
-    public void LoadContent(ContentManager content) {
-        Player.LoadContent(content);
+    public void LoadContent(ContentManager content, ScreenManager screenManager) {
+        Player.LoadContent(content, screenManager);
     }
 
-    public override void Update(GameTime gameTime) {
+    public void Update(GameTime gameTime, string levelName) {
         var dims = new Vector2(Size.X * Tilesize.X, Size.Y * Tilesize.Y);
 
         if (_outsideTrackArr == null) {
@@ -25,7 +27,7 @@ public class GameTilemap : OOTilemap {
         }
 
 
-        Player.Update(gameTime, _outsideTrackArr, dims);
+        Player.Update(gameTime, _outsideTrackArr, dims, levelName);
 
         base.Update(gameTime);
     }

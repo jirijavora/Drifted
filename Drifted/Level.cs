@@ -15,11 +15,18 @@ public class Level : GameScreen {
         base.Activate();
 
         tilemap = Content.Load<GameTilemap>(levelName);
-        tilemap.LoadContent(Content);
+        tilemap.LoadContent(Content, ScreenManager);
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen) {
-        tilemap.Update(gameTime);
+        if (coveredByOtherScreen) return;
+        tilemap.Update(gameTime, levelName);
+    }
+
+    public override void HandleInput(GameTime gameTime, InputState input) {
+        if (input.Escape) ScreenManager.AddScreen(new PauseScreen(ScreenManager, this));
+
+        base.HandleInput(gameTime, input);
     }
 
     public override void Draw(GameTime gameTime) {

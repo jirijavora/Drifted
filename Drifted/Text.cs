@@ -20,8 +20,10 @@ public class Text {
         color = Color.White;
     }
 
-    public Text(ScreenManager screenManager, Color? colorOverride = null) {
+    public Text(ScreenManager screenManager, Vector2 position, string value, Color? colorOverride = null) {
         font = screenManager.Font;
+        this.position = position;
+        this.value = value;
         color = colorOverride ?? color ?? Color.White;
     }
 

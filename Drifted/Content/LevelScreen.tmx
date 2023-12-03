@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="6" height="8" tilewidth="128" tileheight="128" infinite="0" nextlayerid="6" nextobjectid="16">
+ <tileset firstgid="1" name="race_track_tiles" tilewidth="128" tileheight="128" spacing="2" tilecount="465" columns="31">
+  <image source="racing_track_tiles.png" width="4096" height="2048"/>
+ </tileset>
+ <layer id="2" name="Background" width="6" height="8">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNjZGBwQcPPGRgYWIH0MwZUfHwAxVcAcQca7gRiAM5LGTTAAAAA
+  </data>
+ </layer>
+ <layer id="5" name="Road" width="6" height="8">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgwA3OAzEvIwRvQBI/B8TroXgCEeKFQBwIxUF47CMHAADvx3G2wAAAAA==
+  </data>
+ </layer>
+ <objectgroup id="3" name="Objects">
+  <object id="12" name="Level name" type="LevelName" x="384" y="384">
+   <point/>
+  </object>
+  <object id="13" name="Silver Time" type="SilverTime" x="400" y="834">
+   <point/>
+  </object>
+  <object id="14" name="Bronze Time" type="BronzeTime" x="150" y="834">
+   <point/>
+  </object>
+  <object id="15" name="Gold Time" type="GoldTime" x="640" y="834">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

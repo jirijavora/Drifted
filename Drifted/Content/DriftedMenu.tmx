@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="12">
+ <tileset firstgid="1" name="race_track_tiles" tilewidth="128" tileheight="128" spacing="2" tilecount="465" columns="31">
+  <image source="racing_track_tiles.png" width="4096" height="2048"/>
+ </tileset>
+ <layer id="1" name="Background" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu3DQQ0AAAwDoVNX/5ImYx9IWDVVVVX19QEDDS09oA8AAA==
+  </data>
+ </layer>
+ <layer id="2" name="Track" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu3BMQEAAADCoPVPbQwfoAAAAIC3Ab6TizqgDwAA
+  </data>
+ </layer>
+ <objectgroup id="3" name="Objects">
+  <object id="6" name="Drited Menu" type="Title" x="2560" y="600">
+   <properties>
+    <property name="value" value="Menu"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="8" name="Play subtitle" type="Text" x="2560" y="2800">
+   <properties>
+    <property name="value" value="Use `A` and `D` or `Left_Arrow` and `Right_Arrow` to select level"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="9" name="Play subtitle" type="Text" x="2560" y="3000">
+   <properties>
+    <property name="value" value="Press `Enter` to play selected level"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="Level 1" type="LevelTile" x="1600" y="1600">
+   <properties>
+    <property name="value" value="Level1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="Level 2" type="LevelTile" x="3410" y="1600">
+   <properties>
+    <property name="value" value="Level2"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+</map>

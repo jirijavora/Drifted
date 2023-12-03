@@ -14,6 +14,8 @@ namespace Drifted.StateManagement;
 public class ScreenManager : DrawableGameComponent {
     public const float MaxMediaVolumeChangeStep = 0.01f;
     private readonly ContentManager content;
+
+    public readonly Game game;
     private readonly InputManager inputManager = new();
     private readonly List<GameScreen> screens = new();
     private readonly List<GameScreen> tmpScreensList = new();
@@ -28,6 +30,7 @@ public class ScreenManager : DrawableGameComponent {
     /// </summary>
     /// <param name="game">The game this ScreenManager belongs to</param>
     public ScreenManager(Game game) : base(game) {
+        this.game = game;
         content = new ContentManager(game.Services, "Content");
         MediaVolume = 0f;
     }
@@ -46,6 +49,11 @@ public class ScreenManager : DrawableGameComponent {
     ///     A SpriteFont shared by all GameScreens
     /// </summary>
     public SpriteFont FontLarge { get; private set; }
+
+    /// <summary>
+    ///     A SpriteFont shared by all GameScreens
+    /// </summary>
+    public SpriteFont FontSmall { get; private set; }
 
     /// <summary>
     ///     A blank texture that can be used by the screens.
@@ -67,6 +75,7 @@ public class ScreenManager : DrawableGameComponent {
         SpriteBatch = new SpriteBatch(GraphicsDevice);
         Font = content.Load<SpriteFont>("MagnetoBold");
         FontLarge = content.Load<SpriteFont>("MagnetoBoldLarge");
+        FontSmall = content.Load<SpriteFont>("MagnetoBoldSmall");
         BlankTexture = content.Load<Texture2D>("Blank");
 
         StartMusic();

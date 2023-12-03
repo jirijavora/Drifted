@@ -6,7 +6,12 @@ namespace Drifted;
 public class InputState {
     public bool Action;
     public Vector2 Direction;
+    public bool DownPress;
+    public bool Escape;
+    public bool LeftPress;
+    public bool RightPress;
     public bool SecondaryAction;
+    public bool UpPress;
 }
 
 public class InputManager {
@@ -46,5 +51,10 @@ public class InputManager {
 
         Input.Action = KeyPressed(Keys.Enter);
         Input.SecondaryAction = KeyPressed(Keys.Space);
+        Input.LeftPress = KeyPressed(Keys.Left) || KeyPressed(Keys.A);
+        Input.RightPress = KeyPressed(Keys.Right) || KeyPressed(Keys.D);
+        Input.UpPress = KeyPressed(Keys.Up) || KeyPressed(Keys.W);
+        Input.DownPress = KeyPressed(Keys.Down) || KeyPressed(Keys.S);
+        Input.Escape = KeyPressed(Keys.Escape);
     }
 }

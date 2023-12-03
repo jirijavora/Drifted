@@ -12,7 +12,7 @@ public class IntroTilemap : OOTilemap {
 
     private readonly List<Text> Texts = new();
 
-    public void LoadContent(ContentManager content, ScreenManager screenManager) {
+    public virtual void LoadContent(ContentManager content, ScreenManager screenManager) {
         foreach (var textRecord in TextRecords) Texts.Add(textRecord.Create(screenManager));
 
         foreach (var text in Texts) text.LoadContent(content);

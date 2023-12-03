@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
@@ -22,6 +23,10 @@ public class PlayerContent {
     public Vector2 Center;
 
     public float Rotation;
+
+    public TimeSpan bronzeTime;
+    public TimeSpan silverTime;
+    public TimeSpan goldTime;
 }
 
 /// <summary>

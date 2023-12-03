@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Globalization;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
@@ -44,12 +46,23 @@ public class GameTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemapC
 
         var center = new Vector2(texture.Mipmaps[0].Width / 2f, texture.Mipmaps[0].Height / 2f);
 
+        context.Logger.LogMessage("Gold time is " +
+                                  double.Parse(player.Properties["gold"], CultureInfo.InvariantCulture));
+        context.Logger.LogMessage("Silver time is " +
+                                  double.Parse(player.Properties["silver"], CultureInfo.InvariantCulture));
+        context.Logger.LogMessage("Bronze time is " +
+                                  double.Parse(player.Properties["bronze"], CultureInfo.InvariantCulture));
+
         // Save the Player in the HeroTilemapContent object 
         gameTilemap.Player = new PlayerContent {
             Position = new Vector2(player.X, player.Y) - center,
             Texture = texture,
             Center = center,
-            Rotation = MathHelper.ToRadians(rotation)
+            Rotation = MathHelper.ToRadians(rotation),
+            goldTime = TimeSpan.FromSeconds(double.Parse(player.Properties["gold"], CultureInfo.InvariantCulture)),
+            silverTime =
+                TimeSpan.FromSeconds(double.Parse(player.Properties["silver"], CultureInfo.InvariantCulture)),
+            bronzeTime = TimeSpan.FromSeconds(double.Parse(player.Properties["bronze"], CultureInfo.InvariantCulture))
         };
 
         context.Logger.LogMessage($"Player is on position {player.X}, {player.Y}");

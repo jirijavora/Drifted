@@ -8,7 +8,8 @@ public class Title : Text {
         font = screenManager.FontLarge;
     }
 
-    public Title(ScreenManager screenManager, Color? colorOverride = null) : base(screenManager, colorOverride) {
+    public Title(ScreenManager screenManager, Vector2 position, string value, Color? colorOverride = null) : base(
+        screenManager, position, value, colorOverride) {
         font = screenManager.FontLarge;
     }
 }

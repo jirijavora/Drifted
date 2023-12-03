@@ -1,6 +1,5 @@
 ﻿using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace Drifted;
 
@@ -33,12 +32,5 @@ public class Drifted : Game {
         _graphics.ApplyChanges();
 
         AddInitialScreens();
-    }
-
-    protected override void Update(GameTime gameTime) {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        base.Update(gameTime);
     }
 }

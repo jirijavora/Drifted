@@ -23,10 +23,12 @@ public class IntroTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemap
         // Get the object objectgroup from the Tiled data
         var objGroup = input.ObjectGroups.Find(group => group.Name == "Objects");
         context.Logger.LogMessage("Objects is " + objGroup.Name + $"({objGroup.Objects.Count})");
-        introTilemap.Texts = new TextContent[objGroup.Objects.Count];
 
 
         var texts = objGroup.Objects.FindAll(obj => obj.Type == "Text");
+        var titles = objGroup.Objects.FindAll(obj => obj.Type == "Title");
+
+        introTilemap.Texts = new TextContent[texts.Count + titles.Count];
 
 
         for (var i = 0; i < texts.Count; i++) {
@@ -36,7 +38,6 @@ public class IntroTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemap
         }
 
 
-        var titles = objGroup.Objects.FindAll(obj => obj.Type == "Title");
         for (var i = 0; i < titles.Count; i++) {
             context.Logger.LogMessage($"Title value: '{titles[i].Properties["value"]}'");
             introTilemap.Texts[i + texts.Count] = new TitleContent {

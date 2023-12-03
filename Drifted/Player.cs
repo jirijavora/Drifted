@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,15 +21,19 @@ public class Player {
 
     public float SpriteRotation { get; init; }
 
+    public TimeSpan bronzeTime;
+    public TimeSpan silverTime;
+    public TimeSpan goldTime;
+
     private Vector2 _direction = Vector2.Zero;
     private float _steeringAngle;
     private float _rotation;
 
     private const float Acceleration = 666;
     private const float MaxSteeringAngle = MathHelper.Pi / 60f;
-    private const float SteeringAcceleration = MaxSteeringAngle * 5f;
+    private const float SteeringAcceleration = MaxSteeringAngle * 3f;
     private const float SteeringReturnAcceleration = 12f * SteeringAcceleration;
-    private const double SteeringLimitationWithSpeed = 0.01;
+    private const double SteeringLimitationWithSpeed = 0.04;
 
     private const float ResistanceConstant = 300;
     private const float ResistanceMultiplier = 0.1f;
@@ -46,7 +51,9 @@ public class Player {
 
     private bool onStartLine = true;
 
-    private TimeSpan lapStartTime = TimeSpan.Zero;
+    private bool isInReverse;
+
+    private TimeSpan lapTime = TimeSpan.Zero;
     private TimeSpan? lastLapTime;
     private TimeSpan? bestLapTime;
 
@@ -54,9 +61,12 @@ public class Player {
 
     private bool triedLoadingFromFile;
 
+    private ScreenManager screenManager;
 
-    public void LoadContent(ContentManager content) {
+
+    public void LoadContent(ContentManager content, ScreenManager screenManager) {
         font = content.Load<SpriteFont>("MagnetoBold");
+        this.screenManager = screenManager;
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -91,12 +101,12 @@ public class Player {
     }
 
 
-    public void Update(GameTime gameTime, bool[] outsideTrackArr, Vector2 trackDims) {
+    public void Update(GameTime gameTime, bool[] outsideTrackArr, Vector2 trackDims, string levelName) {
         if (triedLoadingFromFile == false) {
-            if (File.Exists("savefile.txt")) {
+            if (File.Exists($"{levelName}-savefile.txt")) {
                 Stream stream = null;
                 try {
-                    stream = new FileStream("savefile.txt", FileMode.Open);
+                    stream = new FileStream($"{levelName}-savefile.txt", FileMode.Open);
                     using (var reader = new StreamReader(stream)) {
                         stream = null;
                         lastLapTime = TimeSpan.FromSeconds(double.Parse(reader.ReadLine()));
@@ -121,9 +131,16 @@ public class Player {
         var newOnStartline = Position.X >= startLineX - 10 && Position.X <= startLineX + 10 &&
                              Position.Y >= startLineY1 && Position.Y <= startLineY2;
 
+        lapTime += gameTime.ElapsedGameTime;
+
         if (!onStartLine && newOnStartline) {
-            lastLapTime = gameTime.TotalGameTime - lapStartTime;
-            lapStartTime = gameTime.TotalGameTime;
+            lastLapTime = lapTime;
+            lapTime = TimeSpan.Zero;
+
+            var prevMedal = "";
+            if (bestLapTime < goldTime) prevMedal = "Gold";
+            else if (bestLapTime < silverTime) prevMedal = "Silver";
+            else if (bestLapTime < bronzeTime) prevMedal = "Bronze";
 
             if (bestLapTime.HasValue) {
                 if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) bestLapTime = lastLapTime;
@@ -132,20 +149,30 @@ public class Player {
                 bestLapTime = lastLapTime;
             }
 
+            var medal = "";
+            if (bestLapTime < goldTime) medal = "Gold";
+            else if (bestLapTime < silverTime) medal = "Silver";
+            else if (bestLapTime < bronzeTime) medal = "Bronze";
+
+
             Stream stream = null;
             try {
-                stream = new FileStream("savefile.txt", FileMode.OpenOrCreate);
+                stream = new FileStream($"{levelName}-savefile.txt", FileMode.OpenOrCreate);
                 using (var writer = new StreamWriter(stream)) {
                     stream = null;
 
                     writer.WriteLine(lastLapTime.Value.TotalSeconds);
                     writer.WriteLine(bestLapTime.Value.TotalSeconds);
+                    writer.WriteLine(medal);
                 }
             }
             finally {
                 if (stream != null)
                     stream.Dispose();
             }
+
+            if (prevMedal != medal)
+                screenManager.AddScreen(new MedalAchievedScreen(screenManager, medal));
         }
 
         onStartLine = newOnStartline;
@@ -167,11 +194,11 @@ public class Player {
         var steeringSpeedMultiplier =
             _direction.LengthSquared() < 1 ? 1 : 1f / (float)Math.Pow(curSpeed, SteeringLimitationWithSpeed);
 
-        if (left)
+        if ((left && !isInReverse) || (right && isInReverse))
             _steeringAngle -= (SteeringAcceleration + SteeringReturnAcceleration) *
                               (float)gameTime.ElapsedGameTime.TotalSeconds *
                               steeringSpeedMultiplier;
-        if (right)
+        if ((right && !isInReverse) || (left && isInReverse))
             _steeringAngle += (SteeringAcceleration + SteeringReturnAcceleration) *
                               (float)gameTime.ElapsedGameTime.TotalSeconds *
                               steeringSpeedMultiplier;
@@ -198,6 +225,10 @@ public class Player {
         // Add forward movement
         if (forward)
             _direction += heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+        if (backwards)
+            _direction -= heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (curSpeed > MinMoveSpeed) {
             // Apply steering angle
@@ -229,8 +260,22 @@ public class Player {
                                   (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
+
             // Calculate new rotation and position
-            _rotation = (float)Math.Atan2(_direction.Y, _direction.X);
+            var newRotation = (float)Math.Atan2(_direction.Y, _direction.X);
+            if ((backwards || isInReverse) && Math.Abs(newRotation - _rotation) > Math.PI / 2) {
+                _rotation = newRotation - Math.Sign(newRotation - _rotation) * (float)Math.PI;
+
+                isInReverse = true;
+            }
+            else if (isInReverse && forward && Math.Abs(newRotation - _rotation) < Math.PI / 2) {
+                _rotation = newRotation;
+                isInReverse = false;
+            }
+            else {
+                _rotation = newRotation;
+            }
+
 
             Position += _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
@@ -242,7 +287,7 @@ public class Player {
             1);
 
         spriteBatch.DrawString(font,
-            $"{(gameTime.TotalGameTime - lapStartTime).TotalSeconds:00.00}s",
+            $"{lapTime.TotalSeconds:00.00}s",
             new Vector2(50, 3050),
             Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
 

@@ -3,19 +3,20 @@ using Microsoft.Xna.Framework;
 
 namespace Drifted;
 
-public class IntroScreen : GameScreen {
+public class MenuScreen : GameScreen {
     private readonly ScreenManager screenManager;
-    private IntroTilemap introTilemap;
 
-    public IntroScreen(ScreenManager screenManager) {
+    private MenuTilemap menuTilemap;
+
+    public MenuScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
     public override void Activate() {
         base.Activate();
 
-        introTilemap = Content.Load<IntroTilemap>("DriftedIntro");
-        introTilemap.LoadContent(Content, screenManager);
+        menuTilemap = Content.Load<MenuTilemap>("DriftedMenu");
+        menuTilemap.LoadContent(Content, screenManager);
     }
 
     public override void Unload() {
@@ -23,12 +24,17 @@ public class IntroScreen : GameScreen {
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen) {
-        introTilemap.Update(gameTime);
+        if (otherScreenHasFocus) return;
+
+        menuTilemap.Update(gameTime);
     }
 
     public override void HandleInput(GameTime gameTime, InputState input) {
-        if (input.Escape) screenManager.game.Exit();
-        if (input.Action) ScreenManager.ReplaceScreen(this, new MenuScreen(screenManager));
+        if (input.Escape) ScreenManager.AddScreen(new MenuPauseScreen(screenManager));
+        if (input.Action) ScreenManager.ReplaceScreen(this, new Level(menuTilemap.getLevelName()));
+
+        if (input.RightPress) menuTilemap.selectedUp(gameTime);
+        if (input.LeftPress) menuTilemap.selectedDown(gameTime);
     }
 
     public override void Draw(GameTime gameTime) {
@@ -37,7 +43,7 @@ public class IntroScreen : GameScreen {
         var scaleMatrix = Matrix.CreateScale(0.25f);
         spriteBatch.Begin(transformMatrix: scaleMatrix);
 
-        introTilemap.Draw(gameTime, spriteBatch);
+        menuTilemap.Draw(gameTime, spriteBatch);
 
         spriteBatch.End();
     }
