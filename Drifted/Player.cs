@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
@@ -69,10 +68,14 @@ public class Player {
 
     private ScreenManager screenManager;
 
+    private TiremarksParticleSystem tiremarkParticleSystem;
+
 
     public void LoadContent(ContentManager content, ScreenManager screenManager) {
         font = content.Load<SpriteFont>("MagnetoBold");
         this.screenManager = screenManager;
+        tiremarkParticleSystem = new TiremarksParticleSystem(screenManager.game, 8000);
+        tiremarkParticleSystem.LoadContent();
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -236,9 +239,6 @@ public class Player {
                 MaximumDriftingMultiplier));
         var gripDirectionMultiplier = 1 - driftDirectionMultiplier;
 
-        Debug.WriteLine(steeringAngleSpeedRatio);
-
-
         // Add forward movement
         if (forward)
             _direction += heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -295,10 +295,25 @@ public class Player {
 
 
             Position += _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (driftDirectionMultiplier >= 0.85f) {
+                var carRotationMatrix =
+                    Matrix.CreateRotationZ(_rotation);
+                tiremarkParticleSystem.AddTiremark(Position +
+                                                   Vector2.Transform(new Vector2(-Center.X, -Center.Y / 3),
+                                                       carRotationMatrix));
+                tiremarkParticleSystem.AddTiremark(Position +
+                                                   Vector2.Transform(new Vector2(-Center.X, Center.Y / 3),
+                                                       carRotationMatrix));
+            }
         }
+
+        tiremarkParticleSystem.Update(gameTime);
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
+        tiremarkParticleSystem.Draw(gameTime, spriteBatch);
+
         spriteBatch.Draw(Texture, Position, null, Color.White, SpriteRotation + _rotation, Center, Vector2.One,
             SpriteEffects.None,
             1);
