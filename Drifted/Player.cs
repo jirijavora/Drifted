@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
@@ -32,7 +33,7 @@ public class Player {
     private const float Acceleration = 666;
     private const float MaxSteeringAngle = MathHelper.Pi / 60f;
     private const float SteeringAcceleration = MaxSteeringAngle * 3f;
-    private const float SteeringReturnAcceleration = 12f * SteeringAcceleration;
+    private const float SteeringReturnAcceleration = 5f * SteeringAcceleration;
     private const double SteeringLimitationWithSpeed = 0.04;
 
     private const float ResistanceConstant = 300;
@@ -42,6 +43,11 @@ public class Player {
     private const float OffTrackResistanceConstant = 3000;
 
     private const float OffTrackSpeedImmunity = 160;
+
+    private const float MinimumDriftingSteeringAngleSpeedRatio = 0.0000100f;
+    private const float MaximumDriftingSteeringAngleSpeedRatio = 0.0000450f;
+
+    private const float MaximumDriftingMultiplier = 0.8f;
 
     private Color[] textureData;
 
@@ -222,6 +228,17 @@ public class Player {
         if (_steeringAngle < -1 * MaxSteeringAngle) _steeringAngle = -1 * MaxSteeringAngle;
         if (_steeringAngle > MaxSteeringAngle) _steeringAngle = MaxSteeringAngle;
 
+
+        var steeringAngleSpeedRatio = Math.Abs(_steeringAngle / curSpeed);
+        var offsetSteeringAngleSpeedRatio = steeringAngleSpeedRatio - MinimumDriftingSteeringAngleSpeedRatio;
+        var driftDirectionMultiplier =
+            (float)Math.Sqrt(Math.Clamp(offsetSteeringAngleSpeedRatio / MaximumDriftingSteeringAngleSpeedRatio, 0,
+                MaximumDriftingMultiplier));
+        var gripDirectionMultiplier = 1 - driftDirectionMultiplier;
+
+        Debug.WriteLine(steeringAngleSpeedRatio);
+
+
         // Add forward movement
         if (forward)
             _direction += heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -232,11 +249,11 @@ public class Player {
 
         if (curSpeed > MinMoveSpeed) {
             // Apply steering angle
-            var newDirection = new Vector2(
-                _direction.X * (float)Math.Cos(_steeringAngle) - _direction.Y * (float)Math.Sin(_steeringAngle),
-                _direction.X * (float)Math.Sin(_steeringAngle) + _direction.Y * (float)Math.Cos(_steeringAngle)
-            );
-            _direction = newDirection;
+            var newGripDirection = new Vector2(
+                heading.X * (float)Math.Cos(_steeringAngle) - heading.Y * (float)Math.Sin(_steeringAngle),
+                heading.X * (float)Math.Sin(_steeringAngle) + heading.Y * (float)Math.Cos(_steeringAngle)
+            ) * _direction.Length();
+            _direction = newGripDirection * gripDirectionMultiplier + _direction * driftDirectionMultiplier;
 
             // Add resistance
             var normalizedDirection = new Vector2(_direction.X, _direction.Y);
@@ -262,7 +279,7 @@ public class Player {
 
 
             // Calculate new rotation and position
-            var newRotation = (float)Math.Atan2(_direction.Y, _direction.X);
+            var newRotation = (float)Math.Atan2(newGripDirection.Y, newGripDirection.X);
             if ((backwards || isInReverse) && Math.Abs(newRotation - _rotation) > Math.PI / 2) {
                 _rotation = newRotation - Math.Sign(newRotation - _rotation) * (float)Math.PI;
 
