@@ -61,6 +61,7 @@ public class PauseScreen : GameScreen {
         if (input.UpPress) selectedButton -= 1;
 
         while (selectedButton < 0) selectedButton += buttons.Count;
+        while (selectedButton >= buttons.Count) selectedButton -= buttons.Count;
 
         if (input.DownPress || input.UpPress) selectedChangeSizeUpdate(gameTime);
 
