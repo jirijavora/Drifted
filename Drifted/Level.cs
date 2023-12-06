@@ -16,6 +16,8 @@ public class Level : GameScreen {
 
         tilemap = Content.Load<GameTilemap>(levelName);
         tilemap.LoadContent(Content, ScreenManager);
+
+        ScreenManager.MediaVolume = 0.25f;
     }
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen) {

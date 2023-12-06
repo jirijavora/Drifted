@@ -17,6 +17,8 @@ public class MenuScreen : GameScreen {
 
         menuTilemap = Content.Load<MenuTilemap>("DriftedMenu");
         menuTilemap.LoadContent(Content, screenManager);
+
+        screenManager.MediaVolume = 0.55f;
     }
 
     public override void Unload() {

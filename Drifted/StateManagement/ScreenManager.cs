@@ -23,7 +23,7 @@ public class ScreenManager : DrawableGameComponent {
     private Song backgroundMusic;
 
     private bool isInitialized;
-    public float MediaVolume;
+    public float MediaVolume = 0.8f;
 
     /// <summary>
     ///     Constructs a new ScreenManager
@@ -32,7 +32,6 @@ public class ScreenManager : DrawableGameComponent {
     public ScreenManager(Game game) : base(game) {
         this.game = game;
         content = new ContentManager(game.Services, "Content");
-        MediaVolume = 0f;
     }
 
     /// <summary>
@@ -86,10 +85,10 @@ public class ScreenManager : DrawableGameComponent {
 
 
     private void StartMusic() {
-        // backgroundMusic = content.Load<Song>("music/magic_space");
-        // MediaPlayer.IsRepeating = true;
-        // MediaPlayer.Play(backgroundMusic);
-        // MediaPlayer.Volume = MediaVolume;
+        backgroundMusic = content.Load<Song>("awake10_megaWall");
+        MediaPlayer.IsRepeating = true;
+        MediaPlayer.Play(backgroundMusic);
+        MediaPlayer.Volume = MediaVolume;
     }
 
     /// <summary>
