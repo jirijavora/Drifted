@@ -240,20 +240,33 @@ public class Player {
         var gripDirectionMultiplier = 1 - driftDirectionMultiplier;
 
         // Add forward movement
-        if (forward)
-            _direction += heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (forward) {
+            var directionChange = heading * (Acceleration + ResistanceConstant) *
+                                  (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (directionChange.LengthSquared() > _direction.LengthSquared()) isInReverse = false;
+
+            _direction += directionChange;
+        }
 
 
-        if (backwards)
-            _direction -= heading * (Acceleration + ResistanceConstant) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (backwards) {
+            var directionChange = heading * (Acceleration + ResistanceConstant) *
+                                  (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (directionChange.LengthSquared() > _direction.LengthSquared()) isInReverse = true;
+
+            _direction -= directionChange;
+        }
 
         if (curSpeed > MinMoveSpeed) {
             // Apply steering angle
             var newGripDirection = new Vector2(
                 heading.X * (float)Math.Cos(_steeringAngle) - heading.Y * (float)Math.Sin(_steeringAngle),
                 heading.X * (float)Math.Sin(_steeringAngle) + heading.Y * (float)Math.Cos(_steeringAngle)
-            ) * _direction.Length();
-            _direction = newGripDirection * gripDirectionMultiplier + _direction * driftDirectionMultiplier;
+            ) * _direction.Length() * (isInReverse ? -1 : 1);
+            _direction = newGripDirection * gripDirectionMultiplier +
+                         _direction * driftDirectionMultiplier;
 
             // Add resistance
             var normalizedDirection = new Vector2(_direction.X, _direction.Y);
@@ -280,18 +293,10 @@ public class Player {
 
             // Calculate new rotation and position
             var newRotation = (float)Math.Atan2(newGripDirection.Y, newGripDirection.X);
-            if ((backwards || isInReverse) && Math.Abs(newRotation - _rotation) > Math.PI / 2) {
+            if (isInReverse)
                 _rotation = newRotation - Math.Sign(newRotation - _rotation) * (float)Math.PI;
-
-                isInReverse = true;
-            }
-            else if (isInReverse && forward && Math.Abs(newRotation - _rotation) < Math.PI / 2) {
+            else
                 _rotation = newRotation;
-                isInReverse = false;
-            }
-            else {
-                _rotation = newRotation;
-            }
 
 
             Position += _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
