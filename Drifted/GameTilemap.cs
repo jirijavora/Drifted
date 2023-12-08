@@ -10,9 +10,12 @@ public class GameTilemap : OOTilemap {
     private bool[] _outsideTrackArr;
     public Player Player { get; init; }
 
+    public Checkpoint[] Checkpoints;
+    public Startline Startline;
+
 
     public void LoadContent(ContentManager content, ScreenManager screenManager) {
-        Player.LoadContent(content, screenManager);
+        Player.LoadContent(content, screenManager, Checkpoints, Startline);
     }
 
     public void Update(GameTime gameTime, string levelName) {

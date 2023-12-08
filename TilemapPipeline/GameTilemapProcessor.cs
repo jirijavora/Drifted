@@ -67,6 +67,27 @@ public class GameTilemapProcessor : ContentProcessor<TiledMapContent, OOTilemapC
 
         context.Logger.LogMessage($"Player is on position {player.X}, {player.Y}");
 
+        var checkpoints = objGroup.Objects.FindAll(obj => obj.Type == "Checkpoint");
+
+        gameTilemap.Checkpoints = new CheckpointContent[checkpoints.Count];
+
+        for (var i = 0; i < checkpoints.Count; i++) {
+            gameTilemap.Checkpoints[i] = new CheckpointContent();
+
+            gameTilemap.Checkpoints[i].X = checkpoints[i].X;
+            gameTilemap.Checkpoints[i].Y = checkpoints[i].Y;
+            gameTilemap.Checkpoints[i].Height = checkpoints[i].Height;
+            gameTilemap.Checkpoints[i].Width = checkpoints[i].Width;
+        }
+
+        var startline = objGroup.Objects.Find(obj => obj.Type == "Startline");
+
+        gameTilemap.Startline = new StartlineContent();
+        gameTilemap.Startline.X = startline.X;
+        gameTilemap.Startline.Y = startline.Y;
+        gameTilemap.Startline.Height = startline.Height;
+        gameTilemap.Startline.Width = startline.Width;
+
         // Return the processed map
         return gameTilemap;
     }

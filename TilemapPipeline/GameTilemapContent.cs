@@ -29,6 +29,17 @@ public class PlayerContent {
     public TimeSpan goldTime;
 }
 
+[ContentSerializerRuntimeType("Drifted.Checkpoint, Drifted")]
+public class CheckpointContent {
+    public float Height;
+    public float Width;
+    public float X;
+    public float Y;
+}
+
+[ContentSerializerRuntimeType("Drifted.Startline, Drifted")]
+public class StartlineContent : CheckpointContent { }
+
 /// <summary>
 ///     A class representing a Tilemap with a hero in it
 /// </summary>
@@ -38,4 +49,7 @@ public class GameTilemapContent : OOTilemapContent {
     ///     The hero's starting location (and appearance) in the map
     /// </summary>
     public PlayerContent Player = new();
+
+    public CheckpointContent[] Checkpoints;
+    public StartlineContent Startline;
 }

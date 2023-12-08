@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
@@ -50,10 +51,6 @@ public class Player {
 
     private Color[] textureData;
 
-    private int? startLineX;
-    private int? startLineY1;
-    private int? startLineY2;
-
     private bool onStartLine = true;
 
     private bool isInReverse;
@@ -70,12 +67,26 @@ public class Player {
 
     private TiremarksParticleSystem tiremarkParticleSystem;
 
+    private Checkpoint[] checkpoints;
+    private Startline startline;
 
-    public void LoadContent(ContentManager content, ScreenManager screenManager) {
+    private List<bool> hitCheckpoints;
+
+    private bool lastLapValid = true;
+
+    public void LoadContent(ContentManager content, ScreenManager screenManager, Checkpoint[] Checkpoints,
+        Startline Startline) {
         font = content.Load<SpriteFont>("MagnetoBold");
         this.screenManager = screenManager;
         tiremarkParticleSystem = new TiremarksParticleSystem(screenManager.game, 8000);
         tiremarkParticleSystem.LoadContent();
+
+        checkpoints = Checkpoints;
+        startline = Startline;
+
+        hitCheckpoints = new List<bool>();
+
+        for (var i = 0; i < checkpoints.Length; i++) hitCheckpoints.Add(false);
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -133,12 +144,8 @@ public class Player {
         }
 
 
-        if (startLineX == null) startLineX = (int)Position.X;
-        if (startLineY1 == null) startLineY1 = (int)Position.Y - 180;
-        if (startLineY2 == null) startLineY2 = (int)Position.Y + 180;
-
-        var newOnStartline = Position.X >= startLineX - 10 && Position.X <= startLineX + 10 &&
-                             Position.Y >= startLineY1 && Position.Y <= startLineY2;
+        var newOnStartline = Position.X >= startline.X && Position.X <= startline.X + startline.Width &&
+                             Position.Y >= startline.Y && Position.Y <= startline.Y + startline.Height;
 
         lapTime += gameTime.ElapsedGameTime;
 
@@ -146,45 +153,58 @@ public class Player {
             lastLapTime = lapTime;
             lapTime = TimeSpan.Zero;
 
-            var prevMedal = "";
-            if (bestLapTime < goldTime) prevMedal = "Gold";
-            else if (bestLapTime < silverTime) prevMedal = "Silver";
-            else if (bestLapTime < bronzeTime) prevMedal = "Bronze";
+            lastLapValid = !hitCheckpoints.Exists(x => x == false);
+            for (var i = 0; i < hitCheckpoints.Count; i++) hitCheckpoints[i] = false;
 
-            if (bestLapTime.HasValue) {
-                if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) bestLapTime = lastLapTime;
-            }
-            else {
-                bestLapTime = lastLapTime;
-            }
+            if (lastLapValid) {
+                var prevMedal = "";
+                if (bestLapTime < goldTime) prevMedal = "Gold";
+                else if (bestLapTime < silverTime) prevMedal = "Silver";
+                else if (bestLapTime < bronzeTime) prevMedal = "Bronze";
 
-            var medal = "";
-            if (bestLapTime < goldTime) medal = "Gold";
-            else if (bestLapTime < silverTime) medal = "Silver";
-            else if (bestLapTime < bronzeTime) medal = "Bronze";
-
-
-            Stream stream = null;
-            try {
-                stream = new FileStream($"{levelName}-savefile.txt", FileMode.OpenOrCreate);
-                using (var writer = new StreamWriter(stream)) {
-                    stream = null;
-
-                    writer.WriteLine(lastLapTime.Value.TotalSeconds);
-                    writer.WriteLine(bestLapTime.Value.TotalSeconds);
-                    writer.WriteLine(medal);
+                if (bestLapTime.HasValue) {
+                    if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) bestLapTime = lastLapTime;
                 }
-            }
-            finally {
-                if (stream != null)
-                    stream.Dispose();
-            }
+                else {
+                    bestLapTime = lastLapTime;
+                }
 
-            if (prevMedal != medal)
-                screenManager.AddScreen(new MedalAchievedScreen(screenManager, medal));
+                var medal = "";
+                if (bestLapTime < goldTime) medal = "Gold";
+                else if (bestLapTime < silverTime) medal = "Silver";
+                else if (bestLapTime < bronzeTime) medal = "Bronze";
+
+
+                Stream stream = null;
+                try {
+                    stream = new FileStream($"{levelName}-savefile.txt", FileMode.OpenOrCreate);
+                    using (var writer = new StreamWriter(stream)) {
+                        stream = null;
+
+                        writer.WriteLine(lastLapTime.Value.TotalSeconds);
+                        writer.WriteLine(bestLapTime.Value.TotalSeconds);
+                        writer.WriteLine(medal);
+                    }
+                }
+                finally {
+                    if (stream != null)
+                        stream.Dispose();
+                }
+
+                if (prevMedal != medal)
+                    screenManager.AddScreen(new MedalAchievedScreen(screenManager, medal));
+            }
         }
 
         onStartLine = newOnStartline;
+
+        for (var i = 0; i < checkpoints.Length; i++) {
+            var checkpoint = checkpoints[i];
+
+            if (Position.X >= checkpoint.X && Position.X <= checkpoint.X + checkpoint.Width &&
+                Position.Y >= checkpoint.Y && Position.Y <= checkpoint.Y + checkpoint.Height)
+                hitCheckpoints[i] = true;
+        }
 
         var heading = new Vector2((float)Math.Cos(_rotation), (float)Math.Sin(_rotation));
 
@@ -330,7 +350,7 @@ public class Player {
 
         if (lastLapTime.HasValue)
             spriteBatch.DrawString(font,
-                $"Last lap time: {lastLapTime.Value.TotalSeconds:0.00}s    (best: {bestLapTime.Value.TotalSeconds:0.00}s)",
+                $"Last lap time: {lastLapTime.Value.TotalSeconds:0.00}s {(lastLapValid ? "" : "[Invalid]")}   {(bestLapTime.HasValue ? $"(best: {bestLapTime.Value.TotalSeconds:0.00}s)" : "")}",
                 new Vector2(50, 50),
                 Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
     }
