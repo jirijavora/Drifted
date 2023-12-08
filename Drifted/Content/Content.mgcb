@@ -62,6 +62,12 @@
 /processor:LevelScreenTilemapProcessor
 /build:LevelScreen.tmx
 
+#begin loop_5_0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:loop_5_0.wav
+
 #begin MagnetoBold.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

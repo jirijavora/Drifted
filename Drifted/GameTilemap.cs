@@ -35,6 +35,14 @@ public class GameTilemap : OOTilemap {
         base.Update(gameTime);
     }
 
+    public void Pause() {
+        Player.StopSoundEffects();
+    }
+
+    public void Resume() {
+        Player.ResumeSoundEffects();
+    }
+
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
         // Draw the map
         base.Draw(gameTime, spriteBatch);

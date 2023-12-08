@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -74,6 +75,11 @@ public class Player {
 
     private bool lastLapValid = true;
 
+    private SoundEffect engineSound;
+    private SoundEffectInstance engineSoundInstance;
+
+    private float maxPossibleSpeed;
+
     public void LoadContent(ContentManager content, ScreenManager screenManager, Checkpoint[] Checkpoints,
         Startline Startline) {
         font = content.Load<SpriteFont>("MagnetoBold");
@@ -87,6 +93,17 @@ public class Player {
         hitCheckpoints = new List<bool>();
 
         for (var i = 0; i < checkpoints.Length; i++) hitCheckpoints.Add(false);
+
+        engineSound = content.Load<SoundEffect>("loop_5_0");
+        engineSoundInstance = engineSound.CreateInstance();
+
+        engineSoundInstance.IsLooped = true;
+        engineSoundInstance.Pan = 0;
+        engineSoundInstance.Pitch = -1;
+        engineSoundInstance.Volume = 0.2f;
+        engineSoundInstance.Play();
+
+        maxPossibleSpeed = Acceleration / (1 - ResistanceMultiplier);
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -118,6 +135,14 @@ public class Player {
 
 
         return overlappingPoints / (float)totalPoints;
+    }
+
+    public void StopSoundEffects() {
+        engineSoundInstance.Pause();
+    }
+
+    public void ResumeSoundEffects() {
+        engineSoundInstance.Resume();
     }
 
 
@@ -211,6 +236,7 @@ public class Player {
         var playerOffTrackPercentage = getPlayerOffTrackPercentage(outsideTrackArr, trackDims);
 
         var curSpeed = _direction.Length();
+        engineSoundInstance.Pitch = Math.Clamp((curSpeed - maxPossibleSpeed / 2) / (maxPossibleSpeed / 2), -1, 1);
 
         var keyboardState = Keyboard.GetState();
         var forward = keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W);
