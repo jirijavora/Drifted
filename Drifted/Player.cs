@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
@@ -45,10 +46,10 @@ public class Player {
 
     private const float OffTrackSpeedImmunity = 160;
 
-    private const float MinimumDriftingSteeringAngleSpeedRatio = 0.0000100f;
-    private const float MaximumDriftingSteeringAngleSpeedRatio = 0.0000450f;
+    private const float MinimumDriftingSteeringAngleSpeedRatio = 3f;
+    private const float MaximumDriftingSteeringAngleSpeedRatio = 24f;
 
-    private const float MaximumDriftingMultiplier = 0.8f;
+    private const float MaximumDriftingMultiplier = 0.95f;
 
     private Color[] textureData;
 
@@ -80,6 +81,12 @@ public class Player {
 
     private float maxPossibleSpeed;
 
+    private SoundEffect tireSquealSound;
+    private SoundEffectInstance tireSquealSoundInstance;
+    private bool playTireSqueal = true;
+
+    private const float MinimumDriftMultiplierTireMarks = 0.75f;
+
     public void LoadContent(ContentManager content, ScreenManager screenManager, Checkpoint[] Checkpoints,
         Startline Startline) {
         font = content.Load<SpriteFont>("MagnetoBold");
@@ -104,6 +111,17 @@ public class Player {
         engineSoundInstance.Play();
 
         maxPossibleSpeed = Acceleration / (1 - ResistanceMultiplier);
+
+
+        tireSquealSound = content.Load<SoundEffect>("tire_squeal");
+        tireSquealSoundInstance = tireSquealSound.CreateInstance();
+
+        tireSquealSoundInstance.IsLooped = true;
+        tireSquealSoundInstance.Pan = 0;
+        tireSquealSoundInstance.Pitch = -1;
+        tireSquealSoundInstance.Volume = 0.2f;
+        tireSquealSoundInstance.Play();
+        tireSquealSoundInstance.Pause();
     }
 
     private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
@@ -139,10 +157,13 @@ public class Player {
 
     public void StopSoundEffects() {
         engineSoundInstance.Pause();
+        tireSquealSoundInstance.Pause();
+        playTireSqueal = false;
     }
 
     public void ResumeSoundEffects() {
         engineSoundInstance.Resume();
+        playTireSqueal = true;
     }
 
 
@@ -278,12 +299,15 @@ public class Player {
         if (_steeringAngle > MaxSteeringAngle) _steeringAngle = MaxSteeringAngle;
 
 
-        var steeringAngleSpeedRatio = Math.Abs(_steeringAngle / curSpeed);
+        var steeringAngleSpeedRatio = Math.Abs(_steeringAngle * curSpeed);
         var offsetSteeringAngleSpeedRatio = steeringAngleSpeedRatio - MinimumDriftingSteeringAngleSpeedRatio;
-        var driftDirectionMultiplier =
-            (float)Math.Sqrt(Math.Clamp(offsetSteeringAngleSpeedRatio / MaximumDriftingSteeringAngleSpeedRatio, 0,
-                MaximumDriftingMultiplier));
+        var driftDirectionMultiplier = offsetSteeringAngleSpeedRatio > 0
+            ? Math.Clamp((float)Math.Sqrt(offsetSteeringAngleSpeedRatio / MaximumDriftingSteeringAngleSpeedRatio), 0,
+                MaximumDriftingMultiplier)
+            : 0;
         var gripDirectionMultiplier = 1 - driftDirectionMultiplier;
+
+        Debug.WriteLine(steeringAngleSpeedRatio);
 
         // Add forward movement
         if (forward) {
@@ -347,7 +371,7 @@ public class Player {
 
             Position += _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (driftDirectionMultiplier >= 0.85f) {
+            if (driftDirectionMultiplier >= MinimumDriftMultiplierTireMarks) {
                 var carRotationMatrix =
                     Matrix.CreateRotationZ(_rotation);
                 tiremarkParticleSystem.AddTiremark(Position +
@@ -356,7 +380,27 @@ public class Player {
                 tiremarkParticleSystem.AddTiremark(Position +
                                                    Vector2.Transform(new Vector2(-Center.X, Center.Y / 3),
                                                        carRotationMatrix));
+
+                if (playTireSqueal) {
+                    tireSquealSoundInstance.Resume();
+                    tireSquealSoundInstance.Pitch =
+                        Math.Clamp(
+                            -1.5f + (driftDirectionMultiplier - MinimumDriftMultiplierTireMarks) /
+                            (MaximumDriftingMultiplier - MinimumDriftMultiplierTireMarks), -1, 0);
+
+                    tireSquealSoundInstance.Volume =
+                        Math.Clamp(
+                            (driftDirectionMultiplier - MinimumDriftMultiplierTireMarks) /
+                            (MaximumDriftingMultiplier - MinimumDriftMultiplierTireMarks)
+                            * 0.15f, 0, 0.15f);
+                }
             }
+            else {
+                tireSquealSoundInstance.Pause();
+            }
+        }
+        else {
+            tireSquealSoundInstance.Pause();
         }
 
         tiremarkParticleSystem.Update(gameTime);

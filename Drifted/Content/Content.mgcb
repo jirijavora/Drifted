@@ -89,3 +89,9 @@
 /processorParam:TextureFormat=Compressed
 /build:MagnetoBoldSmall.spritefont
 
+#begin tire_squeal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:tire_squeal.wav
+
