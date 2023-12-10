@@ -85,7 +85,7 @@ public class Player {
     private SoundEffectInstance tireSquealSoundInstance;
     private bool playTireSqueal = true;
 
-    private const float MinimumDriftMultiplierTireMarks = 0.75f;
+    private const float MinimumDriftMultiplierTireMarks = 0.55f;
 
     public void LoadContent(ContentManager content, ScreenManager screenManager, Checkpoint[] Checkpoints,
         Startline Startline) {
@@ -124,26 +124,27 @@ public class Player {
         tireSquealSoundInstance.Pause();
     }
 
-    private float getPlayerOffTrackPercentage(bool[] outsideTrackArr, Vector2 trackDims) {
+    private float getPlayerOffTrackPercentage(Vector2 position, float rotation, bool[] outsideTrackArr,
+        Vector2 trackDims) {
         if (textureData == null) {
             textureData = new Color[Texture.Height * Texture.Width];
             Texture.GetData(textureData);
         }
 
         var transformMatrix = Matrix.CreateTranslation(-Texture.Width / 2f, -Texture.Height / 2f, 0) *
-                              Matrix.CreateRotationZ(_rotation) *
-                              Matrix.CreateTranslation(Position.X, Position.Y, 0);
+                              Matrix.CreateRotationZ(SpriteRotation + rotation) *
+                              Matrix.CreateTranslation(position.X, position.Y, 0);
 
         var overlappingPoints = 0;
         var totalPoints = 0;
 
-        for (var i = 0; i < Texture.Width; i++)
-        for (var i2 = 0; i2 < Texture.Height; i2++)
+        for (var i = 0; i < Texture.Height; i++)
+        for (var i2 = 0; i2 < Texture.Width; i2++)
             if (textureData[i * Texture.Width + i2].A > 0) {
                 totalPoints++;
-                var actualPointPos = Vector2.Transform(new Vector2(i, i2), transformMatrix);
+                var actualPointPos = Vector2.Transform(new Vector2(i2, i), transformMatrix);
 
-                if (actualPointPos.X > trackDims.X || actualPointPos.X < 0 || actualPointPos.Y > trackDims.Y ||
+                if (actualPointPos.X >= trackDims.X || actualPointPos.X < 0 || actualPointPos.Y >= trackDims.Y ||
                     actualPointPos.Y < 0)
                     return -1f;
 
@@ -254,7 +255,7 @@ public class Player {
 
         var heading = new Vector2((float)Math.Cos(_rotation), (float)Math.Sin(_rotation));
 
-        var playerOffTrackPercentage = getPlayerOffTrackPercentage(outsideTrackArr, trackDims);
+        var playerOffTrackPercentage = getPlayerOffTrackPercentage(Position, _rotation, outsideTrackArr, trackDims);
 
         var curSpeed = _direction.Length();
         engineSoundInstance.Pitch = Math.Clamp((curSpeed - maxPossibleSpeed / 2) / (maxPossibleSpeed / 2), -1, 1);
@@ -314,7 +315,7 @@ public class Player {
             var directionChange = heading * (Acceleration + ResistanceConstant) *
                                   (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (directionChange.LengthSquared() > _direction.LengthSquared()) isInReverse = false;
+            if (directionChange.LengthSquared() >= _direction.LengthSquared()) isInReverse = false;
 
             _direction += directionChange;
         }
@@ -324,10 +325,12 @@ public class Player {
             var directionChange = heading * (Acceleration + ResistanceConstant) *
                                   (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (directionChange.LengthSquared() > _direction.LengthSquared()) isInReverse = true;
+            if (directionChange.LengthSquared() >= _direction.LengthSquared()) isInReverse = true;
 
             _direction -= directionChange;
         }
+
+        curSpeed = _direction.Length();
 
         if (curSpeed > MinMoveSpeed) {
             // Apply steering angle
@@ -349,6 +352,8 @@ public class Player {
 
             _direction -= (1 - ResistanceMultiplier) * _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            curSpeed = _direction.Length();
+
             // Add off track resistance
 
             if (curSpeed > OffTrackSpeedImmunity) {
@@ -362,24 +367,34 @@ public class Player {
 
 
             // Calculate new rotation and position
+            var newPosition = Position + _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
             var newRotation = (float)Math.Atan2(newGripDirection.Y, newGripDirection.X);
             if (isInReverse)
-                _rotation = newRotation - Math.Sign(newRotation - _rotation) * (float)Math.PI;
+                newRotation = newRotation - Math.Sign(newRotation - _rotation) * (float)Math.PI;
             else
+                newRotation = newRotation;
+            if (getPlayerOffTrackPercentage(newPosition, newRotation, outsideTrackArr, trackDims) != -1) {
+                Position = newPosition;
                 _rotation = newRotation;
+            }
+            else {
+                _direction = Vector2.Zero;
+            }
 
-
-            Position += _direction * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (driftDirectionMultiplier >= MinimumDriftMultiplierTireMarks) {
                 var carRotationMatrix =
                     Matrix.CreateRotationZ(_rotation);
                 tiremarkParticleSystem.AddTiremark(Position +
                                                    Vector2.Transform(new Vector2(-Center.X, -Center.Y / 3),
-                                                       carRotationMatrix));
+                                                       carRotationMatrix),
+                    (driftDirectionMultiplier - MinimumDriftMultiplierTireMarks) /
+                    (MaximumDriftingMultiplier - MinimumDriftMultiplierTireMarks));
                 tiremarkParticleSystem.AddTiremark(Position +
                                                    Vector2.Transform(new Vector2(-Center.X, Center.Y / 3),
-                                                       carRotationMatrix));
+                                                       carRotationMatrix),
+                    (driftDirectionMultiplier - MinimumDriftMultiplierTireMarks) /
+                    (MaximumDriftingMultiplier - MinimumDriftMultiplierTireMarks));
 
                 if (playTireSqueal) {
                     tireSquealSoundInstance.Resume();

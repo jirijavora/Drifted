@@ -36,10 +36,10 @@ public abstract class ParticleSystem {
     ///     AddParticles will have no effect.
     /// </summary>
     /// <param name="where">where the particle effect should be created</param>
-    protected void AddParticle(Vector2 where) {
+    protected void AddParticle(Vector2 where, float value) {
         // the number of particles we want for this effect is a random number
         // somewhere between the two constants specified by the subclasses.
-        InitializeParticle(ref particles[++lastUsedParticle % particles.Length], where);
+        InitializeParticle(ref particles[++lastUsedParticle % particles.Length], where, value);
     }
 
     #endregion
@@ -147,7 +147,7 @@ public abstract class ParticleSystem {
     /// <param name="where">
     ///     the position on the screen that the particle should be
     /// </param>
-    protected virtual void InitializeParticle(ref Particle p, Vector2 where) {
+    protected virtual void InitializeParticle(ref Particle p, Vector2 where, float value) {
         // Initialize the particle with default values
         p.Initialize(where);
     }

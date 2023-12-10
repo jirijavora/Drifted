@@ -13,9 +13,13 @@ public class GameTilemap : OOTilemap {
     public Checkpoint[] Checkpoints;
     public Startline Startline;
 
+    private SpriteFont loadingFont;
+
 
     public void LoadContent(ContentManager content, ScreenManager screenManager) {
         Player.LoadContent(content, screenManager, Checkpoints, Startline);
+
+        loadingFont = screenManager.FontLarge;
     }
 
     public void Update(GameTime gameTime, string levelName) {
@@ -44,10 +48,20 @@ public class GameTilemap : OOTilemap {
     }
 
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
-        // Draw the map
-        base.Draw(gameTime, spriteBatch);
+        if (_outsideTrackArr != null) {
+            // Draw the map
+            base.Draw(gameTime, spriteBatch);
 
-        // Draw the hero
-        Player.Draw(gameTime, spriteBatch);
+            // Draw the hero
+            Player.Draw(gameTime, spriteBatch);
+        }
+        else {
+            var loadingString = "Loading...";
+
+            var loadingStringSize = loadingFont.MeasureString(loadingString);
+
+            spriteBatch.DrawString(loadingFont, loadingString, new Vector2(2560, 1600) - loadingStringSize / 2f,
+                Color.White);
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace Drifted;
 public class PauseScreen : GameScreen {
     private const float MaxAdditionalSizeHalf = 0.05f;
     private readonly List<Button> buttons = new();
-    private readonly Color overlayColorBackground = Color.FromNonPremultiplied(0, 0, 0, 160);
+    private readonly Color overlayColorBackground = Color.FromNonPremultiplied(0, 0, 0, 200);
     private readonly ScreenManager screenManager;
 
     private readonly List<Text> texts = new();
