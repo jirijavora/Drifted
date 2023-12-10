@@ -4,7 +4,10 @@ using Microsoft.Xna.Framework;
 namespace Drifted;
 
 public class IntroScreen : GameScreen {
+    private const int IntroCarInverseActiveChance = 200;
     private readonly ScreenManager screenManager;
+
+    private IntroCar[] introCars;
     private IntroTilemap introTilemap;
 
     public IntroScreen(ScreenManager screenManager) {
@@ -16,6 +19,12 @@ public class IntroScreen : GameScreen {
 
         introTilemap = Content.Load<IntroTilemap>("DriftedIntro");
         introTilemap.LoadContent(Content, screenManager);
+
+        introCars = new IntroCar[5];
+        for (var i = 0; i < introCars.Length; i++) {
+            introCars[i] = new IntroCar();
+            introCars[i].LoadContent(Content);
+        }
     }
 
     public override void Unload() {
@@ -24,6 +33,10 @@ public class IntroScreen : GameScreen {
 
     public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen) {
         introTilemap.Update(gameTime);
+        foreach (var car in introCars) {
+            if (RandomHelper.Next(IntroCarInverseActiveChance) == 0) car.Activate();
+            car.Update(gameTime);
+        }
     }
 
     public override void HandleInput(GameTime gameTime, InputState input) {
@@ -38,6 +51,9 @@ public class IntroScreen : GameScreen {
         spriteBatch.Begin(transformMatrix: scaleMatrix);
 
         introTilemap.Draw(gameTime, spriteBatch);
+        foreach (var car in introCars) car.Draw(gameTime, spriteBatch);
+
+        introTilemap.DrawText(gameTime, spriteBatch);
 
         spriteBatch.End();
     }

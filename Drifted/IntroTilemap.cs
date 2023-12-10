@@ -27,7 +27,9 @@ public class IntroTilemap : OOTilemap {
     public override void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
         // Draw the map
         base.Draw(gameTime, spriteBatch);
+    }
 
+    public void DrawText(GameTime gameTime, SpriteBatch spriteBatch) {
         // Draw the texts
         foreach (var text in Texts) text.Draw(gameTime, spriteBatch);
     }

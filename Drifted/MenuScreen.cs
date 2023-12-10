@@ -46,6 +46,7 @@ public class MenuScreen : GameScreen {
         spriteBatch.Begin(transformMatrix: scaleMatrix);
 
         menuTilemap.Draw(gameTime, spriteBatch);
+        menuTilemap.DrawText(gameTime, spriteBatch);
 
         spriteBatch.End();
     }
