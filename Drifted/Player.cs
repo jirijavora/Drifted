@@ -14,6 +14,39 @@ namespace Drifted;
 // Added here just for reordering prevention
 public class IgnoreTypeMemberReorderingAttribute : Attribute { }
 
+public struct PlayerReconstructionPos {
+    public TimeSpan time { get; }
+    public Vector2 position { get; }
+    public float rotation { get; }
+
+    public string getString() {
+        return $"{time.TotalSeconds} {position}:{rotation};";
+    }
+
+    public PlayerReconstructionPos(TimeSpan time, Vector2 position, float rotation) {
+        this.time = time;
+        this.position = position;
+        this.rotation = rotation;
+    }
+
+    public PlayerReconstructionPos(string info) {
+        var spaceIndex = info.IndexOf(' ');
+        var XIndex = info.IndexOf('X');
+        var YIndex = info.IndexOf('Y');
+        var closeCurlyIndex = info.IndexOf('}');
+
+        var timeString = info.Substring(0, spaceIndex);
+        var XString = info.Substring(XIndex + 2, YIndex - (XIndex + 2));
+        var YString = info.Substring(YIndex + 2, closeCurlyIndex - (YIndex + 2));
+        var rotationString = info.Substring(closeCurlyIndex + 2);
+
+        time = TimeSpan.FromSeconds(double.Parse(timeString));
+        position = new Vector2(float.Parse(XString),
+            float.Parse(YString));
+        rotation = float.Parse(rotationString);
+    }
+}
+
 [IgnoreTypeMemberReorderingAttribute]
 public class Player {
     public Vector2 Position { get; private set; }
@@ -86,6 +119,14 @@ public class Player {
     private bool playTireSqueal = true;
 
     private const float MinimumDriftMultiplierTireMarks = 0.55f;
+
+    private string playerRecording = "";
+
+    private string bestPlayerGhostString = "";
+
+    private List<PlayerReconstructionPos>? playerGhost;
+    private List<PlayerReconstructionPos> playerGhostNew = new();
+    private int playerGhostIndex;
 
     public void LoadContent(ContentManager content, ScreenManager screenManager, Checkpoint[] Checkpoints,
         Startline Startline) {
@@ -167,6 +208,17 @@ public class Player {
         playTireSqueal = true;
     }
 
+    private List<PlayerReconstructionPos> createPlayerGhost(string ghostString) {
+        var ghostInfo = ghostString.Split(';');
+        var ghost = new List<PlayerReconstructionPos>();
+
+        foreach (var ghostRecord in ghostInfo)
+            if (ghostRecord.Length > 0)
+                ghost.Add(new PlayerReconstructionPos(ghostRecord));
+
+        return ghost;
+    }
+
 
     public void Update(GameTime gameTime, bool[] outsideTrackArr, Vector2 trackDims, string levelName) {
         if (triedLoadingFromFile == false) {
@@ -178,6 +230,11 @@ public class Player {
                         stream = null;
                         lastLapTime = TimeSpan.FromSeconds(double.Parse(reader.ReadLine()));
                         bestLapTime = TimeSpan.FromSeconds(double.Parse(reader.ReadLine()));
+                        reader.ReadLine();
+
+                        bestPlayerGhostString = reader.ReadLine();
+
+                        playerGhost = createPlayerGhost(bestPlayerGhostString);
                     }
                 }
                 finally {
@@ -195,6 +252,9 @@ public class Player {
                              Position.Y >= startline.Y && Position.Y <= startline.Y + startline.Height;
 
         lapTime += gameTime.ElapsedGameTime;
+        var newReconstructionPos = new PlayerReconstructionPos(lapTime, Position, _rotation);
+        playerRecording += newReconstructionPos.getString();
+        playerGhostNew.Add(newReconstructionPos);
 
         if (!onStartLine && newOnStartline) {
             lastLapTime = lapTime;
@@ -210,10 +270,16 @@ public class Player {
                 else if (bestLapTime < bronzeTime) prevMedal = "Bronze";
 
                 if (bestLapTime.HasValue) {
-                    if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) bestLapTime = lastLapTime;
+                    if (bestLapTime.Value.TotalSeconds > lastLapTime.Value.TotalSeconds) {
+                        bestLapTime = lastLapTime;
+                        bestPlayerGhostString = playerRecording;
+                        playerGhost = playerGhostNew;
+                    }
                 }
                 else {
                     bestLapTime = lastLapTime;
+                    bestPlayerGhostString = playerRecording;
+                    playerGhost = playerGhostNew;
                 }
 
                 var medal = "";
@@ -231,6 +297,7 @@ public class Player {
                         writer.WriteLine(lastLapTime.Value.TotalSeconds);
                         writer.WriteLine(bestLapTime.Value.TotalSeconds);
                         writer.WriteLine(medal);
+                        writer.WriteLine(bestPlayerGhostString);
                     }
                 }
                 finally {
@@ -241,6 +308,10 @@ public class Player {
                 if (prevMedal != medal)
                     screenManager.AddScreen(new MedalAchievedScreen(screenManager, medal));
             }
+
+            playerRecording = "";
+            playerGhostIndex = 0;
+            playerGhostNew = new List<PlayerReconstructionPos>();
         }
 
         onStartLine = newOnStartline;
@@ -424,6 +495,19 @@ public class Player {
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
         tiremarkParticleSystem.Draw(gameTime, spriteBatch);
 
+        if (playerGhost != null) {
+            var playerGhostRecord = playerGhost[playerGhostIndex];
+
+            while (playerGhostRecord.time <= lapTime && playerGhostIndex + 1 < playerGhost.Count)
+                playerGhostRecord = playerGhost[++playerGhostIndex];
+
+            // Draw ghost
+            spriteBatch.Draw(Texture, playerGhostRecord.position, null, new Color(100, 100, 100, 100),
+                SpriteRotation + playerGhostRecord.rotation, Center, Vector2.One,
+                SpriteEffects.None,
+                1);
+        }
+
         spriteBatch.Draw(Texture, Position, null, Color.White, SpriteRotation + _rotation, Center, Vector2.One,
             SpriteEffects.None,
             1);
@@ -433,10 +517,13 @@ public class Player {
             new Vector2(50, 3050),
             Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
 
-        if (lastLapTime.HasValue)
-            spriteBatch.DrawString(font,
-                $"Last lap time: {lastLapTime.Value.TotalSeconds:0.00}s {(lastLapValid ? "" : "[Invalid]")}   {(bestLapTime.HasValue ? $"(best: {bestLapTime.Value.TotalSeconds:0.00}s)" : "")}",
-                new Vector2(50, 50),
-                Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
+        var lastLapString = lastLapTime.HasValue
+            ? $"Last lap time: {lastLapTime.Value.TotalSeconds:0.00}s {(lastLapValid ? "" : "[Invalid]")}"
+            : "[No last lap time]";
+
+        spriteBatch.DrawString(font,
+            $"{lastLapString}   {(bestLapTime.HasValue ? $"(best: {bestLapTime.Value.TotalSeconds:0.00}s)" : "")}",
+            new Vector2(50, 50),
+            Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 1);
     }
 }
