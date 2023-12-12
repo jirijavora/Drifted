@@ -117,6 +117,11 @@
 /processor:GameTilemapProcessor
 /build:Level2.tmx
 
+#begin Level3.tmx
+/importer:TiledImporter
+/processor:GameTilemapProcessor
+/build:Level3.tmx
+
 #begin LevelScreen.tmx
 /importer:TiledImporter
 /processor:LevelScreenTilemapProcessor

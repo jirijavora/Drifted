@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="128" tileheight="128" infinite="0" nextlayerid="5" nextobjectid="10">
+ <tileset firstgid="1" name="race_track_tiles" tilewidth="128" tileheight="128" spacing="2" tilecount="465" columns="31">
+  <image source="racing_track_tiles.png" width="4096" height="2048"/>
+ </tileset>
+ <layer id="1" name="Background" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACnNjYGBwG8S4BYhjGcnXX8MIMQMbpsRcGP4PxHYUmPMQiDlw4ENUCD+Q+xZTya+Uhjs2NzwA4lmMlIUhOZgBaJ8akPKF2v8CRzzKMVIex+S6bxGQagbiFCBWx5EeBsp96OkWV1odKPcRi0fdN+q+weC+gSijiXXfA4aBKaOJwc0MiDJyMLqP2vX5KB7Fo3gU0wLj6ytRu99EjttSgbQrI6TNjo7VgOL8DBA8EHUpA9T+kwyQOhMd56C5ldi6CgDnSAOroA8AAA==
+  </data>
+ </layer>
+ <layer id="2" name="Track" width="40" height="25">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu1WO04DMRC1S0BIFOQOfMpwB34VcAG6QIXEFZB204DgBggp0ATBEYaGJpCDAIfgDbEly5rx2uymy0hPK43X4+fxm7GNWRjb0BpzDqxm4lWJcwdcGnnOAbBt/8drC1gBjkwaA2tOX/C9VeL1gXVh3g/A8z4V7ho8rw/Me87Yz9Sto/GbKmM3wEXD3iXk8irht4z9fhfE7NJy+PH4deRP6fsE4zvuv1C/Of44/sDp4biAfw94tzM/I9Y5a/rR1U2o3xx/XD9NepD41Y4bx5fmjzBeuVzy/vdsvr+L+vG+J6W37MK/4XK6hO9Xgb+L+mHfGeLtF/a+edimlflp9ZQyqaYOFSCXxEAPI/Qy0mJOgHFLfqHmfU01nSPuJcL9RFw7WJ8mCY4xn5KeGNa6Vk8pQ18jnotzLOIn9UTJ6iBnWj2lDDmg8WzNbH5ek1XijRD2V/63TT1Jegr7O68RjntN+rxIbwSvtZJeVsKvH6wv3X8574O2vNiQc2L9xufrNebvIO3+m7dBs3/1ofHrqs81IdZxrF+NX5URe83I2itFqGMXg9wY1VF/GWWucWXN/Zvwb87bXXqPC2D9US/KX3hnN+HBtq+LuN6QQ2LgjGmY6M0LK7Nf9KjjrqAPAAA=
+  </data>
+ </layer>
+ <objectgroup id="3" name="Objects">
+  <object id="2" name="Player" x="1750" y="2820">
+   <properties>
+    <property name="bronze" value="36.5"/>
+    <property name="gold" value="31.8"/>
+    <property name="image" value="./car_blue_3.png"/>
+    <property name="name" value="Player"/>
+    <property name="rotation" value="90"/>
+    <property name="silver" value="34"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="4" name="Startline" type="Startline" x="1696" y="2560" width="64" height="384"/>
+  <object id="5" name="Checkpoint #3" type="Checkpoint" x="1920" y="768" width="128" height="256"/>
+  <object id="6" name="Checkpoint #1" type="Checkpoint" x="4224" y="2560" width="128" height="384"/>
+  <object id="7" name="Checkpoint #2" type="Checkpoint" x="1920" y="2048" width="128" height="256"/>
+  <object id="8" name="Checkpoint #4" type="Checkpoint" x="4352" y="128" width="128" height="256"/>
+  <object id="9" name="Checkpoint #5" type="Checkpoint" x="895" y="256" width="128" height="256"/>
+ </objectgroup>
+</map>

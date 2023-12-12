@@ -14,12 +14,14 @@ public class GameTilemap : OOTilemap {
     public Startline Startline;
 
     private SpriteFont loadingFont;
+    private SpriteFont controlsFont;
 
 
     public void LoadContent(ContentManager content, ScreenManager screenManager) {
         Player.LoadContent(content, screenManager, Checkpoints, Startline);
 
         loadingFont = screenManager.FontLarge;
+        controlsFont = screenManager.Font;
     }
 
     public void Update(GameTime gameTime, string levelName) {
@@ -61,6 +63,14 @@ public class GameTilemap : OOTilemap {
             var loadingStringSize = loadingFont.MeasureString(loadingString);
 
             spriteBatch.DrawString(loadingFont, loadingString, new Vector2(2560, 1600) - loadingStringSize / 2f,
+                Color.White);
+
+            var controlsInfoString = "Use `W A S D` or the arrow keys to control the car";
+
+            var controlsInfoStringSize = controlsFont.MeasureString(controlsInfoString);
+
+            spriteBatch.DrawString(controlsFont, controlsInfoString,
+                new Vector2(2560, 2600) - controlsInfoStringSize / 2f,
                 Color.White);
         }
     }

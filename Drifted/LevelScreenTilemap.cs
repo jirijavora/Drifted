@@ -57,12 +57,14 @@ public class LevelScreenTilemap : OOTilemap {
 
         spriteBatch.DrawString(font, name, nameCenter - textDims / 2f, Color.White);
 
-        if (bestLapTime.HasValue) {
-            var bestLapText = $"Best: {bestLapTime.Value.TotalSeconds:0.00}s" +
-                              (medal != null && medal.Length > 0 ? $"({medal})" : "");
-            textDims = fontSmall.MeasureString(bestLapText);
-            spriteBatch.DrawString(fontSmall, bestLapText, silverTimeCenter - textDims / 2f, Color.White);
-        }
+        var bestLapText = "[No lap set]";
+
+        if (bestLapTime.HasValue)
+            bestLapText = $"Best: {bestLapTime.Value.TotalSeconds:0.00}s" +
+                          (medal != null && medal.Length > 0 ? $" ({medal})" : "");
+
+        textDims = fontSmall.MeasureString(bestLapText);
+        spriteBatch.DrawString(fontSmall, bestLapText, silverTimeCenter - textDims / 2f, Color.White);
 
 
         spriteBatch.End();

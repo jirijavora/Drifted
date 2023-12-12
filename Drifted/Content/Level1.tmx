@@ -10,18 +10,18 @@
  </layer>
  <layer id="2" name="Track" width="40" height="25">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAACu2WQUoDMRSG87aC4ELv0Oqyhyi68wbuiquCVxBsN0q9gQjFjdAeIS50I50epB7CP3QePNK8mSRtQxf94YcZ8oZ8+TOPxJijmrSET2nTc6X+FX5Qvgn5Br6ifL4KnsHn8C08IHPn3idKfa+uT/HC5HMy30R5b1uP5j+Fc1WITxtnvcDDAOfzgfD5nN+0/u6E0jLcNx+rS3kZluL7hT9Neoal+JxyMizJl5NhST6n1AxL86VkeE3G/lBZPqfYDD/Ax3UxfBewv54cyQyfAmf0GM/3Yg2xfCParM9V15vfnX18p7j0xmbruW0bX2V2xyczbDP2zGLvivI58dmHzKxm7LMd19nJfqlq3n3ypUr2yyHxcb8MxH/Zxues3ZnPGsZyLPqF87PcL1LTQF/5fiTz9hVRt4Wt7BepPubtUPO92fk9oibVoX45anv9A7p6id+gDwAA
+   H4sIAAAAAAAACu2WQUoDMRSG39sKggu9g9VlD1F05w3cFVeCVxDablrqDUQQN0J7hHShG3E8iD1E/9B58EiTmSRtQxf94YcJ84Z8+TOPhOioJv3Bp7zpeaD+BX4KfOPzLXzN+XwVPIPP4Tu4z3Rvx9NAfbeuT/Ev5XMK3zQwbltPyMsA538hvtB70QR+9HCOD4TP5fzi9XcnnJbhvvlEHc7LsBTfD/xJ6RmW4rPKybAkX06GJfmsUjMszZeS4Q2T+eayfFaxGX6AT+pi+C5gdz050hkOPGf0CM8Pag2xfEPerM9Vx5nfnn1yp7hy3s3Wc5s2vop2x6czbDP2zGDvivJZydmHzEzI2GczqrPT/VLVvPvkS5Xul0Pik37pq/+yjW/QcGc+o/j7dYxVv0h+RvpF693TV66fmV4XEXVb2Oh+0eph3ktuvjdbv0XUpNrXL0dtrxUYgvnfoA8AAA==
   </data>
  </layer>
  <objectgroup id="3" name="Objects">
   <object id="2" name="Player" x="1750" y="2820">
    <properties>
-    <property name="bronze" value="21.5"/>
-    <property name="gold" value="19.5"/>
+    <property name="bronze" value="22.5"/>
+    <property name="gold" value="20.5"/>
     <property name="image" value="./car_blue_3.png"/>
     <property name="name" value="Player"/>
     <property name="rotation" value="90"/>
-    <property name="silver" value="20.3"/>
+    <property name="silver" value="21.3"/>
    </properties>
    <point/>
   </object>
