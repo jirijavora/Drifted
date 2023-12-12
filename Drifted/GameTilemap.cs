@@ -1,4 +1,6 @@
-﻿using Drifted.StateManagement;
+﻿using System;
+using System.Threading;
+using Drifted.StateManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,6 +35,8 @@ public class GameTilemap : OOTilemap {
             var trackLayer = Layers[1];
             _outsideTrackArr = new bool[(int)dims.X * (int)dims.Y];
             foreach (var tile in trackLayer.Tiles) tile.FillAreaOnMap(textureData, ref _outsideTrackArr, dims);
+
+            Thread.Sleep(new TimeSpan(0, 0, 0, 1, 500));
         }
 
 
